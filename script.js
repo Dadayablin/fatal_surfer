@@ -1,7 +1,8 @@
-const character = document.querySelector('#hero');
-const block = document.querySelector('#blocks');
-const score = document.querySelector('#score');
-const highScore = document.querySelector('#top-score');
+const character = document.querySelector("#hero");
+const block = document.querySelector("#blocks");
+const score = document.querySelector("#score");
+const highScore = document.querySelector("#top-score");
+const police = document.querySelector("#police");
 
 let lost = true;
 
@@ -10,10 +11,13 @@ const moveRight = () => {
     lost = false;
   }
   let left = character.offsetLeft;
-  if (left != 220) {
-    left += 110;
+  if (left != 455) {
+    left += 220;
   }
-  character.style.left = left + 'px';
+  character.style.left = left + "px";
+  setTimeout(() => {
+    police.style.left = left + "px";
+  }, 100);
 };
 
 const moveLeft = () => {
@@ -21,30 +25,33 @@ const moveLeft = () => {
     lost = false;
   }
   let left = character.offsetLeft;
-  if (left != 0) {
-    left -= 110;
+  if (left != 15) {
+    left -= 220;
   }
-  character.style.left = left + 'px';
+  character.style.left = left + "px";
+  setTimeout(() => {
+    police.style.left = left + "px";
+  }, 100);
 };
 
 const topScoreHandler = (score, topScore) => {
   if (score > topScore) {
-    localStorage.setItem('High Score', score);
-    highScore.innerText = localStorage.getItem('High Score');
+    localStorage.setItem("High Score", score);
+    highScore.innerText = localStorage.getItem("High Score");
   }
 };
 
-window.addEventListener('keydown', (e) => {
-  if (e.key == 'ArrowRight' || e.key == 'd') {
+window.addEventListener("keydown", (e) => {
+  if (e.key == "ArrowRight" || e.key == "d") {
     moveRight();
-  } else if (e.key == 'ArrowLeft' || e.key == 'a') {
+  } else if (e.key == "ArrowLeft" || e.key == "a") {
     moveLeft();
   }
 });
 
-block.addEventListener('animationiteration', () => {
+block.addEventListener("animationiteration", () => {
   let rand = Math.floor(Math.random() * 3); // 0 1 2
-  block.style.left = rand * 110 + 'px';
+  block.style.left = rand * 220 + "px";
 
   if (!lost) {
     score.innerText = parseInt(score.innerText) + 1;
@@ -53,33 +60,34 @@ block.addEventListener('animationiteration', () => {
 
 setInterval(() => {
   let characterLeftPos = parseInt(
-    window.getComputedStyle(character).getPropertyValue('left')
+    window.getComputedStyle(character).getPropertyValue("left")
   );
   let blockLeftPos = parseInt(
-    window.getComputedStyle(block).getPropertyValue('left')
+    window.getComputedStyle(block).getPropertyValue("left")
   );
 
   let blockTopPos = parseInt(
-    window.getComputedStyle(block).getPropertyValue('top')
+    window.getComputedStyle(block).getPropertyValue("top")
   );
 
   if (
-    characterLeftPos == blockLeftPos &&
-    blockTopPos > 420 &&
-    blockTopPos < 530
+    (characterLeftPos === blockLeftPos - 15 ||
+      characterLeftPos === blockLeftPos + 15) &&
+    blockTopPos > 500 &&
+    blockTopPos < 550
   ) {
-    character.style.left = 110 + 'px';
+    character.style.left = 235 + "px";
     lost = true;
     topScoreHandler(parseInt(score.innerText), parseInt(highScore.innerText));
     score.innerText = 0;
   }
 });
 
-window.addEventListener('load', () => {
-  if (localStorage.getItem('High Score')) {
-    highScore.innerText = localStorage.getItem('High Score');
+window.addEventListener("load", () => {
+  if (localStorage.getItem("High Score")) {
+    highScore.innerText = localStorage.getItem("High Score");
   } else {
-    localStorage.setItem('High Score', 0);
-    highScore.innerText = localStorage.getItem('High Score');
+    localStorage.setItem("High Score", 0);
+    highScore.innerText = localStorage.getItem("High Score");
   }
 });
