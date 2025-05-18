@@ -77,6 +77,7 @@ setInterval(() => {
     blockTopPos < 550
   ) {
     character.style.left = 235 + "px";
+    police.style.left = 235 + "px";
     lost = true;
     topScoreHandler(parseInt(score.innerText), parseInt(highScore.innerText));
     score.innerText = 0;
