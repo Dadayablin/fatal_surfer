@@ -1,11 +1,13 @@
 const icons = ['🍒', '🍋', '🔔', '⭐', '💎'];
 const reels = [document.getElementById('col1'), document.getElementById('col2'), document.getElementById('col3')];
 const itemHeight = 60;
-const totalItems = 30;
-const baseSpeed = 300; // px per second
+const totalItems = 50;
+const baseSpeed = 300;
 
 const spinButton = document.getElementById('spinBtn');
 const notification = document.getElementById('notification');
+const coinDisplay = document.getElementById('coinCount');
+let coins = 500;
 
 function generateReelContent(reel) {
   reel.innerHTML = '';
@@ -16,37 +18,41 @@ function generateReelContent(reel) {
     reel.appendChild(item);
   }
 }
-
-function getCenterIcon(reel, stopIndex) {
-  return reel.children[stopIndex + 1].textContent;
-}
-
 function animateReel(reel, distanceMultiplier = 1) {
   return new Promise(resolve => {
-    reel.style.transition = 'none';
-    reel.style.transform = 'translateY(0)';
-    void reel.offsetHeight;
-
+    // Генерируем контент
     generateReelContent(reel);
 
     const steps = 10 + distanceMultiplier * 5;
     const stopIndex = steps;
-    const offsetY = -(steps * itemHeight);
-    const duration = Math.round((Math.abs(offsetY) / baseSpeed) * 1000);
 
+    const offsetY = stopIndex * itemHeight;
+    const duration = Math.round(offsetY / baseSpeed * 1000);
+
+    // Ставим начальное положение ПОВЫШЕ, чтобы начать «сверху»
+    reel.style.transition = 'none';
+    reel.style.transform = `translateY(-${offsetY}px)`;
+    void reel.offsetHeight;
+
+    // Анимируем ВНИЗ — в позицию 0
     setTimeout(() => {
       reel.style.transition = `transform ${duration}ms linear`;
-      reel.style.transform = `translateY(${offsetY}px)`;
+      reel.style.transform = `translateY(0)`;
 
       setTimeout(() => {
+        // После остановки фиксируем stopIndex
         reel.style.transition = 'none';
-        const finalOffset = -(stopIndex * itemHeight);
-        reel.style.transform = `translateY(${finalOffset}px)`;
+        reel.style.transform = `translateY(0)`; // остановились на центре
         reel.dataset.stopIndex = stopIndex;
         resolve();
       }, duration);
     }, 20);
   });
+}
+
+function getCenterIcon(reel) {
+  const index = parseInt(reel.dataset.stopIndex);
+  return reel.children[index].textContent;
 }
 
 function showNotification(text, isWin = false) {
@@ -55,6 +61,27 @@ function showNotification(text, isWin = false) {
   setTimeout(() => {
     notification.classList.remove('show');
   }, 2500);
+}
+
+function updateBalance(amount) {
+  coins += amount;
+  coinDisplay.textContent = coins;
+}
+
+function buyItem(name) {
+  const priceMap = {
+    'Cool Hat': 100,
+    'Green Shades': 200,
+    'Dark Blade': 300
+  };
+
+  const price = priceMap[name];
+  if (coins >= price) {
+    updateBalance(-price);
+    showNotification(`✅ Куплено!`, true);
+  } else {
+    showNotification(`💸 Недостаточно`, false);
+  }
 }
 
 document.getElementById('spinBtn').addEventListener('click', async () => {
@@ -68,48 +95,20 @@ document.getElementById('spinBtn').addEventListener('click', async () => {
     animateReel(reels[2], durations[2])
   ]);
 
-  // Получаем центральные смайлики
-  const iconsInCenter = reels.map(reel => {
-    const index = parseInt(reel.dataset.stopIndex);
-    return getCenterIcon(reel, index);
-  });
+  const centerIcons = reels.map(getCenterIcon);
+  const [a, b, c] = centerIcons;
+  const win = a === b && b === c && a ===c;
 
-  const [a, b, c] = iconsInCenter;
-  const win = a === b && b === c;
-
-  showNotification(win ? 'Ура! Ты выиграл!' : 'Не расстраивайся, повезёт в следующий раз!', win);
+  if (win) updateBalance(+100);
+  showNotification(win ? 'WIN!' : 'Try again', win);
 
   spinButton.disabled = false;
 });
 
-function buyItem(name) {
-  const priceMap = {
-    'Cool Hat': 100,
-    'Green Shades': 200,
-    'Dark Blade': 300
-  };
-
-  const price = priceMap[name];
-
-  if (coins >= price) {
-    updateBalance(-price);
-    showNotification(`✅ Куплено!`, true);
-  } else {
-    showNotification(`💸 Недостаточно`, false);
-  }
-}
-
-let coins = 500;
-const coinDisplay = document.getElementById('coinCount');
-
-function updateBalance(amount) {
-  coins += amount;
-  coinDisplay.textContent = coins;
-}
-
-// Заполняем слоты при загрузке
+// Инициализация при загрузке
 window.onload = () => {
   reels.forEach(generateReelContent);
+  coinDisplay.textContent = coins;
 };
 
 function goBack() {
