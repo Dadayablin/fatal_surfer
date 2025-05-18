@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bear Game Menu</title>
+  <link rel="stylesheet" href="gameMenu.css" />
+</head>
+<body>
+  <div class="phone-screen">
+    <img src="bull-face-clipart-xl.png" class="logo-img" />
+    <div class="game-title">Сабвейчик</div>
+    <div class="best-score">Best Score: <span id="bestScore">0</span></div>
+
+    <div class="button-group">
+      <button class="menu-button" onclick="startGame()">Start</button>
+      <button class="menu-button" onclick="openShop()">Shop</button>
+      <button class="menu-button" onclick="openSkins()">Skins</button>
+    </div>
+  </div>
+
+  <script>
+    const bestScore = localStorage.getItem('bestScore') || 123;
+    document.getElementById('bestScore').textContent = bestScore;
+
+    function startGame() {
+      alert('Start Game');
+    }
+
+    function openShop() {
+      alert('Go to Shop');
+    }
+
+    function openSkins() {
+      alert('Choose Skins');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop</title>
+  <link rel="stylesheet" href="shop.css" />
+</head>
+<body>
+  <div class="phone-screen">
+
+    <div id="notification" class="notification">Notification!</div>
+    <div class="top-bar">
+      <button class="back-button" onclick="goBack()">←</button>
+      <div class="balance">💰 <span id="coinCount">500</span></div>
+    </div>
+    <!-- Казино -->
+    <h2 class="section-title">Wheel of Fortune</h2>
+    <div class="casino">
+      <div class="slots">
+        <div class="slot-window"><div class="reel" id="col1"></div></div>
+        <div class="slot-window"><div class="reel" id="col2"></div></div>
+        <div class="slot-window"><div class="reel" id="col3"></div></div>
+      </div>
+      <button id="spinBtn">SPIN</button>
+    </div>
+
+    <!-- Магазин -->
+    <h2 class="section-title">Upgrades</h2>
+    <div class="shop">
+      <div class="item">
+        <img src="https://via.placeholder.com/80" alt="Item1">
+        <button onclick="buyItem('Cool Hat')">💰 100</button>
+      </div>
+      <div class="item">
+        <img src="https://via.placeholder.com/80" alt="Item2">
+        <button onclick="buyItem('Green Shades')">💰 200</button>
+      </div>
+      <div class="item">
+        <img src="https://via.placeholder.com/80" alt="Item3">
+        <button onclick="buyItem('Dark Blade')">💰 300</button>
+      </div>
+    </div>
+  <script src="shop-script.js"></script>
+</body>
+</html>
