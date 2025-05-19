@@ -1,4 +1,4 @@
-const icons = ['🍒', '🍋', '🔔', '⭐', '💎'];
+const icons = ['🍒', '⭐', '💎'];
 const reels = [document.getElementById('col1'), document.getElementById('col2'), document.getElementById('col3')];
 const itemHeight = 60;
 const totalItems = 50;
@@ -51,8 +51,13 @@ function animateReel(reel, distanceMultiplier = 1) {
 }
 
 function getCenterIcon(reel) {
-  const index = parseInt(reel.dataset.stopIndex);
-  return reel.children[index].textContent;
+  const transformY = getComputedStyle(reel).transform;
+  const matrix = new DOMMatrixReadOnly(transformY);
+  const offsetY = matrix.m42; // Y-смещение
+
+  // Текущий элемент, находящийся по центру
+  const centerIndex = Math.round(-offsetY / itemHeight);
+  return reel.children[centerIndex]?.textContent || '❓';
 }
 
 function showNotification(text, isWin = false) {
@@ -97,10 +102,11 @@ document.getElementById('spinBtn').addEventListener('click', async () => {
 
   const centerIcons = reels.map(getCenterIcon);
   const [a, b, c] = centerIcons;
-  const win = a === b && b === c && a ===c;
+  console.log(centerIcons)
+  console.log(a, b, c)
 
-  if (win) updateBalance(+100);
-  showNotification(win ? 'WIN!' : 'Try again', win);
+  if (a===b && b===c) updateBalance(+100);
+  showNotification((a===b && b===c) ? 'WIN!' : 'Try again', (a===b && b===c));
 
   spinButton.disabled = false;
 });
