@@ -1,11 +1,16 @@
 // Получаем канвас и контекст
 const canvas = document.getElementById("gameCanvas");
+canvas.width = 360;
+canvas.height = 640;
 const ctx = canvas.getContext("2d");
+const score_doc = document.getElementById("score");
+let score_multiplicator = 1;
+let coins_multiplicator = 1;
 
 // Игрок
 const player = {
-  x: 200,
-  y: 230,
+  x: 182,
+  y: 470,
   width: 70,
   height: 10,
   jumpStrength: -10,
@@ -13,8 +18,8 @@ const player = {
 };
 
 const police = {
-  x: 200,
-  y: 300,
+  x: 182,
+  y: 550,
   width: 70,
   height: 10,
   jumpStrength: -10,
@@ -22,7 +27,7 @@ const police = {
 };
 
 // Три дорожки (x координаты)
-const lanes = [100, 200, 300];
+const lanes = [62, 182, 302];
 
 // Объекты (препятствия и монеты)
 let obstacles = [];
@@ -35,8 +40,8 @@ document.addEventListener("keydown", (e) => {
       player.lane--;
       player.x = lanes[player.lane];
       setTimeout(() => {
-      police.lane--;
-      police.x = lanes[player.lane];
+        police.lane--;
+        police.x = lanes[player.lane];
       }, 100);
     }
   } else if (e.keyCode === 68) {
@@ -44,8 +49,8 @@ document.addEventListener("keydown", (e) => {
       player.lane++;
       player.x = lanes[player.lane];
       setTimeout(() => {
-      police.lane--;
-      police.x = lanes[player.lane];
+        police.lane--;
+        police.x = lanes[player.lane];
       }, 100);
     }
   }
@@ -53,6 +58,8 @@ document.addEventListener("keydown", (e) => {
 
 // Создаем препятствия и монеты
 function spawnObstacle() {
+  let train = new Image();
+  train.src = "./img/train.png";
   let rand = Math.floor(Math.random() * 100);
   if (rand > 30) {
     let rand2 = Math.floor(Math.random() * 3);
@@ -60,10 +67,10 @@ function spawnObstacle() {
       let laneIndex = Math.floor(Math.random() * lanes.length);
       obstacles.push({
         x: lanes[laneIndex],
-        y: -60,
+        y: -200,
         width: 40,
         height: 60,
-        color: "red",
+        img: train,
         speedY: 4,
       });
     }
@@ -71,10 +78,10 @@ function spawnObstacle() {
     let laneIndex = Math.floor(Math.random() * lanes.length);
     obstacles.push({
       x: lanes[laneIndex],
-      y: -60,
+      y: -200,
       width: 40,
       height: 60,
-      color: "red",
+      img: train,
       speedY: 4,
     });
   }
@@ -82,26 +89,34 @@ function spawnObstacle() {
 
 function spawnCoin() {
   const laneIndex = Math.floor(Math.random() * lanes.length);
-  coins.push({
-    x: lanes[laneIndex],
-    y: -20,
-    radius: 10,
-    color: "gold",
-    speedY: 4,
-  });
+  if(obstacles[obstacles.length - 1].x !== lanes[laneIndex]){
+    coins.push({
+      x: lanes[laneIndex],
+      y: -20,
+      radius: 10,
+      color: "gold",
+      speedY: 4,
+    });
+  }
 }
 
 // Спавн каждые несколько секунд
-setInterval(spawnObstacle, 2000);
-setInterval(spawnCoin, 1500);
+let score = 0;
+let interval = 2000;
+setInterval(spawnObstacle, interval);
+setInterval(spawnCoin, 1000);
 
 // Основной цикл игры
-let score = 0;
 let countCoins = 0;
 let gameOver = false;
-
+let score_minus = 1;
 function gameLoop() {
-  score += 1
+  score += 0.3 * score_multiplicator;
+  if (score % (1000 * score_minus) === 0) {
+    score_minus += 1;
+    interval = interval - 100;
+  }
+  // score_doc.innerText = score.toFixed(0);
   if (gameOver) {
     ctx.fillStyle = "rgba(0,0,0,0.7)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -109,14 +124,13 @@ function gameLoop() {
     ctx.font = "30px Arial";
     ctx.fillText("Игра окончена", 200, 200);
     ctx.font = "20px Arial";
-    ctx.fillText("Очки:" + score, 250, 240);
+    ctx.fillText("Очки:" + score.toFixed(0), 250, 240);
     ctx.fillText("Монетки:" + countCoins, 300, 300);
     return;
   }
 
   // Очистка
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 
   // Рисуем игрока
   player.img = new Image();
@@ -139,13 +153,7 @@ function gameLoop() {
     }
 
     // Рисуем препятствие
-    ctx.fillStyle = obs.color;
-    ctx.fillRect(
-      obs.x - obs.width / 2,
-      obs.y - obs.height / 2,
-      obs.width,
-      obs.height
-    );
+    ctx.drawImage(obs.img, obs.x - 127, obs.y, 250, 250);
 
     // Проверка коллизии с игроком
     if (
@@ -177,7 +185,7 @@ function gameLoop() {
       Math.abs(player.y - coin.y) < player.height / 2 + coin.radius
     ) {
       coins.splice(i, 1);
-      countCoins++;
+      countCoins = countCoins + 1 * coins_multiplicator;
     }
   }
 
