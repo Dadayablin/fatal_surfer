@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skins</title>
+  <link rel="stylesheet" href="skins.css" />
+</head>
+<body>
+  <div class="phone-screen">
+    <div class="top-bar">
+      <button class="back-button" onclick="goBack()">←</button>
+      <div class="screen-title">Выбор скина</div>
+    </div>
+
+    <div class="skin-grid">
+        <!-- Первая строка: активные -->
+        <button class="skin-button active bull" onclick="selectSkin(this)">
+        <img src="./img/bull1.png" alt="Bull 1" />
+        </button>
+        <button class="skin-button active bear" onclick="selectSkin(this)">
+        <img src="./img/bear1.png" alt="Bear 1" />
+        </button>
+
+        <!-- Вторая строка: заблокированные -->
+        <button class="skin-button locked bull">
+        <img src="./img/bull2.png" alt="Bull 2" />
+        </button>
+        <button class="skin-button locked bear">
+        <img src="./img/bear2.png" alt="Bear 2" />
+        </button>
+
+        <!-- Третья строка: заблокированные -->
+        <button class="skin-button locked bull">
+        <img src="./img/bull3.png" alt="Bull 3" />
+        </button>
+        <button class="skin-button locked bear">
+        <img src="./img/bear3.png" alt="Bear 3" />
+        </button>
+
+    </div>
+  </div>
+
+<script>
+  function goBack() {
+    window.location.href = "gameMenu.html";
+  }
+
+    function selectSkin(button) {
+    const isBear = button.classList.contains('bear');
+    const isBull = button.classList.contains('bull');
+    const imgAlt = button.querySelector('img')?.alt;
+
+    if (isBear) {
+        document.querySelectorAll('.skin-button.active.bear').forEach(btn =>
+        btn.classList.remove('selected')
+        );
+        button.classList.add('selected');
+        localStorage.setItem('selectedBear', imgAlt);
+    }
+
+    if (isBull) {
+        document.querySelectorAll('.skin-button.active.bull').forEach(btn =>
+        btn.classList.remove('selected')
+        );
+        button.classList.add('selected');
+        localStorage.setItem('selectedBull', imgAlt);
+    }
+    }
+
+    window.onload = () => {
+    const unlockedSkins = JSON.parse(localStorage.getItem('unlockedSkins') || '[]');
+    const savedBull = localStorage.getItem('selectedBull');
+    const savedBear = localStorage.getItem('selectedBear');
+
+    // Разблокируем скины из localStorage
+    document.querySelectorAll('.skin-button.locked').forEach(btn => {
+        const alt = btn.querySelector('img')?.alt;
+        if (unlockedSkins.includes(alt)) {
+        btn.classList.remove('locked');
+        btn.classList.add('active');
+        btn.setAttribute('onclick', 'selectSkin(this)');
+        btn.style.cursor = 'pointer';
+        }
+    });
+
+    // Восстанавливаем выбор быка
+    const bullButtons = document.querySelectorAll('.skin-button.active.bull');
+    let bullSelected = false;
+    bullButtons.forEach(btn => {
+        const alt = btn.querySelector('img')?.alt;
+        if (alt === savedBull) {
+        btn.classList.add('selected');
+        bullSelected = true;
+        }
+    });
+
+    // Восстанавливаем выбор медведя
+    const bearButtons = document.querySelectorAll('.skin-button.active.bear');
+    let bearSelected = false;
+    bearButtons.forEach(btn => {
+        const alt = btn.querySelector('img')?.alt;
+        if (alt === savedBear) {
+        btn.classList.add('selected');
+        bearSelected = true;
+        }
+    });
+
+    // Если ничего не выбрано — выбрать первый доступный
+    if (!bullSelected && bullButtons.length > 0) {
+        bullButtons[0].classList.add('selected');
+        localStorage.setItem('selectedBull', bullButtons[0].querySelector('img')?.alt);
+    }
+
+    if (!bearSelected && bearButtons.length > 0) {
+        bearButtons[0].classList.add('selected');
+        localStorage.setItem('selectedBear', bearButtons[0].querySelector('img')?.alt);
+    }
+    };
+</script>
+
+
+</body>
+</html>

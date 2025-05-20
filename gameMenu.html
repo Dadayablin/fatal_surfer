@@ -13,9 +13,9 @@
     <div class="best-score">Best Score: <span id="bestScore">0</span></div>
 
     <div class="button-group">
-      <button class="menu-button" onclick="startGame()">Start</button>
-      <button class="menu-button" onclick="openShop()">Shop</button>
-      <button class="menu-button" onclick="openSkins()">Skins</button>
+      <button class="menu-button" onclick="startGame()">▶ Start</button>
+      <button class="menu-button" onclick="goTo('shop.html')">🛒 Shop</button>
+      <button class="menu-button" onclick="goTo('skins.html')">🎨 Skins</button>
     </div>
   </div>
 
@@ -24,15 +24,11 @@
     document.getElementById('bestScore').textContent = bestScore;
 
     function startGame() {
-      alert('Start Game');
+      window.location.href = 'game.html';
     }
 
-    function openShop() {
-      alert('Go to Shop');
-    }
-
-    function openSkins() {
-      alert('Choose Skins');
+    function goTo(page) {
+      window.location.href = page;
     }
   </script>
 </body>

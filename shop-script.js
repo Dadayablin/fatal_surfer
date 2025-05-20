@@ -1,4 +1,10 @@
-const icons = ['🍒', '⭐', '💎'];
+const icons = ['🍒', '⭐', '💎', '🧨'];
+const iconToSkin = {
+  '🍒': 'Bull 2',
+  '⭐': 'Bull 3',
+  '💎': 'Bear 2',
+  '🧨': 'Bear 3'
+};
 const reels = [document.getElementById('col1'), document.getElementById('col2'), document.getElementById('col3')];
 const itemHeight = 60;
 const totalItems = 50;
@@ -9,18 +15,47 @@ const notification = document.getElementById('notification');
 const coinDisplay = document.getElementById('coinCount');
 let coins = 500;
 
+function disableSpinButton() {
+  spinButton.disabled = true;
+  spinButton.textContent = 'SOON';
+  spinButton.style.background = '#2e2e2e';
+  spinButton.style.color = '#888';
+  spinButton.style.cursor = 'not-allowed';
+}
+
 function generateReelContent(reel) {
+  const iconMap = {
+    '🍒': './img/bull2.png',
+    '⭐': './img/bull3.png',
+    '💎': './img/bear2.png',
+    '🧨': './img/bear3.png',
+  };
+
+  const unlockedSkins = JSON.parse(localStorage.getItem('unlockedSkins') || '[]');
+  const availableIcons = icons.filter(icon => {
+    const skinName = iconToSkin[icon];
+    return !unlockedSkins.includes(skinName);
+  });
+
+  // Если скинов больше нет — оставляем пустую рулетку
+  if (availableIcons.length === 0) {
+    reel.innerHTML = ''; // чистим
+    disableSpinButton();
+    return;
+  }
+
   reel.innerHTML = '';
   for (let i = 0; i < totalItems; i++) {
+    const icon = availableIcons[Math.floor(Math.random() * availableIcons.length)];
     const item = document.createElement('div');
     item.classList.add('reel-item');
-    item.textContent = icons[Math.floor(Math.random() * icons.length)];
+    item.innerHTML = `<img src="${iconMap[icon]}" alt="${icon}" class="icon-img">`;
     reel.appendChild(item);
   }
 }
+
 function animateReel(reel, distanceMultiplier = 1) {
   return new Promise(resolve => {
-    // Генерируем контент
     generateReelContent(reel);
 
     const steps = 10 + distanceMultiplier * 5;
@@ -29,7 +64,6 @@ function animateReel(reel, distanceMultiplier = 1) {
     const offsetY = stopIndex * itemHeight;
     const duration = Math.round(offsetY / baseSpeed * 1000);
 
-    // Ставим начальное положение ПОВЫШЕ, чтобы начать «сверху»
     reel.style.transition = 'none';
     reel.style.transform = `translateY(-${offsetY}px)`;
     void reel.offsetHeight;
@@ -40,9 +74,8 @@ function animateReel(reel, distanceMultiplier = 1) {
       reel.style.transform = `translateY(0)`;
 
       setTimeout(() => {
-        // После остановки фиксируем stopIndex
         reel.style.transition = 'none';
-        reel.style.transform = `translateY(0)`; // остановились на центре
+        reel.style.transform = `translateY(0)`; 
         reel.dataset.stopIndex = stopIndex;
         resolve();
       }, duration);
@@ -50,14 +83,24 @@ function animateReel(reel, distanceMultiplier = 1) {
   });
 }
 
+function unlockSkin(skinName) {
+  const unlockedSkins = JSON.parse(localStorage.getItem('unlockedSkins') || '[]');
+
+  if (!unlockedSkins.includes(skinName)) {
+    unlockedSkins.push(skinName);
+    localStorage.setItem('unlockedSkins', JSON.stringify(unlockedSkins));
+    showNotification(`🆓 Новый скин разблокирован: ${skinName}`, true);
+  }
+}
+
 function getCenterIcon(reel) {
   const transformY = getComputedStyle(reel).transform;
   const matrix = new DOMMatrixReadOnly(transformY);
-  const offsetY = matrix.m42; // Y-смещение
+  const offsetY = matrix.m42;
 
-  // Текущий элемент, находящийся по центру
   const centerIndex = Math.round(-offsetY / itemHeight);
-  return reel.children[centerIndex]?.textContent || '❓';
+  const img = reel.children[centerIndex]?.querySelector('img');
+  return img?.alt || '❓';
 }
 
 function showNotification(text, isWin = false) {
@@ -69,8 +112,33 @@ function showNotification(text, isWin = false) {
 }
 
 function updateBalance(amount) {
-  coins += amount;
-  coinDisplay.textContent = coins;
+  const start = coins;
+  const end = coins + amount;
+
+  // Обновляем баланс
+  coins = end;
+
+  if (amount < 0) {
+    animateCounter(coinDisplay, start, end, 500);
+  } else {
+    coinDisplay.textContent = coins;
+  }
+}
+
+function animateCounter(element, from, to, duration) {
+  const steps = Math.min(20, Math.abs(from - to)); // не более 20 шагов
+  const stepTime = Math.max(20, duration / steps);
+  let current = from;
+  const delta = (from - to) / steps;
+
+  const interval = setInterval(() => {
+    current -= delta;
+    if ((delta > 0 && current <= to) || (delta < 0 && current >= to)) {
+      current = to;
+      clearInterval(interval);
+    }
+    element.textContent = Math.round(current);
+  }, stepTime);
 }
 
 function buyItem(name) {
@@ -105,16 +173,32 @@ document.getElementById('spinBtn').addEventListener('click', async () => {
   console.log(centerIcons)
   console.log(a, b, c)
 
-  if (a===b && b===c) updateBalance(+100);
-  showNotification((a===b && b===c) ? 'WIN!' : 'Try again', (a===b && b===c));
+  if (a === b && b === c) {
+    updateBalance(+100);
+    showNotification('WIN!', true);
 
+    // Разблокируем скин по символу
+    const skinName = iconToSkin[a];
+    if (skinName) unlockSkin(skinName);
+  } else {
+    showNotification('Try again', false);
+  }
   spinButton.disabled = false;
 });
 
-// Инициализация при загрузке
 window.onload = () => {
   reels.forEach(generateReelContent);
   coinDisplay.textContent = coins;
+
+  const unlockedSkins = JSON.parse(localStorage.getItem('unlockedSkins') || '[]');
+  const availableIcons = icons.filter(icon => {
+    const skinName = iconToSkin[icon];
+    return !unlockedSkins.includes(skinName);
+  });
+
+  if (availableIcons.length === 0) {
+    disableSpinButton();
+  }
 };
 
 function goBack() {
