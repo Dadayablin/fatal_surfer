@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Skins</title>
-  <link rel="stylesheet" href="skins.css" />
+  <link rel="stylesheet" href="./skins.css" />
 </head>
 <body>
   <div class="phone-screen">
@@ -16,26 +16,26 @@
     <div class="skin-grid">
         <!-- Первая строка: активные -->
         <button class="skin-button active bull" onclick="selectSkin(this)">
-        <img src="./img/bull1.png" alt="Bull 1" />
+        <img src="../img/bull1.png" alt="1" />
         </button>
         <button class="skin-button active bear" onclick="selectSkin(this)">
-        <img src="./img/bear1.png" alt="Bear 1" />
+        <img src="../img/bear1.png" alt="1" />
         </button>
 
         <!-- Вторая строка: заблокированные -->
         <button class="skin-button locked bull">
-        <img src="./img/bull2.png" alt="Bull 2" />
+        <img src="../img/bull2.png" alt="2" />
         </button>
         <button class="skin-button locked bear">
-        <img src="./img/bear2.png" alt="Bear 2" />
+        <img src="../img/bear2.png" alt="2" />
         </button>
 
         <!-- Третья строка: заблокированные -->
         <button class="skin-button locked bull">
-        <img src="./img/bull3.png" alt="Bull 3" />
+        <img src="../img/bull3.png" alt="3" />
         </button>
         <button class="skin-button locked bear">
-        <img src="./img/bear3.png" alt="Bear 3" />
+        <img src="../img/bear3.png" alt="3" />
         </button>
 
     </div>
@@ -43,7 +43,7 @@
 
 <script>
   function goBack() {
-    window.location.href = "gameMenu.html";
+    window.location.href = "../menu/gameMenu.html";
   }
 
     function selectSkin(button) {
@@ -118,7 +118,5 @@
     }
     };
 </script>
-
-
 </body>
 </html>

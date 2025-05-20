@@ -4,8 +4,50 @@ canvas.width = 360;
 canvas.height = 640;
 const ctx = canvas.getContext("2d");
 const score_doc = document.getElementById("score");
-let score_multiplicator = 1;
-let coins_multiplicator = 1;
+const coins_doc = document.getElementById("coins");
+let coins_bonus = {};
+coins_bonus.multiplicator = 1;
+coins_bonus.isActive = false;
+coins_bonus.time = 3;
+let shield = {};
+shield.time = 2;
+shield.isActive = false;
+let skate = {};
+skate.multiplicator = 0;
+skate.isActive = false;
+skate.time = 3;
+let bull_num = localStorage.getItem("selectedBull");
+let bear_num = localStorage.getItem("selectedBear");
+let train_img = new Image();
+train_img.src = "../img/train.png";
+let coin_img = new Image();
+coin_img.src = "../img/coin1.png";
+
+document.getElementById("shield_bonus").onclick = () => {
+  shield.isActive = true;
+  console.log("shield bonus active")
+  setTimeout(() => {
+    console.log("shield bonus deactive")
+    shield.isActive = false;
+  }, shield.time * 1000);
+};
+document.getElementById("skate_bonus").onclick = () => {
+  skate.isActive = true;
+  console.log("skate bonus active")
+  setTimeout(() => {
+    console.log("skate bonus deactive")
+    skate.isActive = false;
+  }, skate.time * 1000);
+};
+
+document.getElementById("coins_bonus").onclick = () => {
+  coins_bonus.isActive = true;
+  console.log("coin bonus active")
+  setTimeout(() => {
+    console.log("coin bonus deactive")
+    coins_bonus.isActive = false;
+  }, coins_bonus.time * 1000);
+};
 
 // Игрок
 const player = {
@@ -58,8 +100,6 @@ document.addEventListener("keydown", (e) => {
 
 // Создаем препятствия и монеты
 function spawnObstacle() {
-  let train = new Image();
-  train.src = "./img/train.png";
   let rand = Math.floor(Math.random() * 100);
   if (rand > 30) {
     let rand2 = Math.floor(Math.random() * 3);
@@ -70,7 +110,7 @@ function spawnObstacle() {
         y: -200,
         width: 40,
         height: 60,
-        img: train,
+        img: train_img,
         speedY: 4,
       });
     }
@@ -81,7 +121,7 @@ function spawnObstacle() {
       y: -200,
       width: 40,
       height: 60,
-      img: train,
+      img: train_img,
       speedY: 4,
     });
   }
@@ -89,12 +129,15 @@ function spawnObstacle() {
 
 function spawnCoin() {
   const laneIndex = Math.floor(Math.random() * lanes.length);
-  if(obstacles[obstacles.length - 1].x !== lanes[laneIndex]){
+  if (
+    obstacles.length > 0 &&
+    obstacles[obstacles.length - 1].x !== lanes[laneIndex]
+  ) {
     coins.push({
       x: lanes[laneIndex],
       y: -20,
+      img: coin_img,
       radius: 10,
-      color: "gold",
       speedY: 4,
     });
   }
@@ -111,12 +154,16 @@ let countCoins = 0;
 let gameOver = false;
 let score_minus = 1;
 function gameLoop() {
-  score += 0.3 * score_multiplicator;
+  if (skate.isActive) {
+    score += 0.3 * skate.multiplicator;
+  } else {
+    score += 0.3;
+  }
   if (score % (1000 * score_minus) === 0) {
     score_minus += 1;
     interval = interval - 100;
   }
-  // score_doc.innerText = score.toFixed(0);
+  score_doc.innerText = score.toFixed(0);
   if (gameOver) {
     ctx.fillStyle = "rgba(0,0,0,0.7)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -134,11 +181,11 @@ function gameLoop() {
 
   // Рисуем игрока
   player.img = new Image();
-  player.img.src = "./img/bull1.png";
+  player.img.src = `../img/bull${bull_num}.png`;
   ctx.drawImage(player.img, player.x - 35, player.y, 70, 70);
 
   police.img = new Image();
-  police.img.src = "./img/bear1.png";
+  police.img.src = `../img/bear${bear_num}.png`;
   ctx.drawImage(police.img, police.x - 35, police.y, 70, 70);
 
   // Обработка препятствий
@@ -158,7 +205,8 @@ function gameLoop() {
     // Проверка коллизии с игроком
     if (
       Math.abs(player.x - obs.x) < (player.width + obs.width) / 2 &&
-      Math.abs(player.y - obs.y) < (player.height + obs.height) / 2
+      Math.abs(player.y - obs.y - 200) < (player.height + obs.height) / 2 &&
+      !shield.isActive
     ) {
       gameOver = true;
     }
@@ -174,10 +222,7 @@ function gameLoop() {
       continue;
     }
 
-    ctx.beginPath();
-    ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
-    ctx.fillStyle = coin.color;
-    ctx.fill();
+    ctx.drawImage(coin.img, coin.x - 34, coin.y, 65, 65);
 
     // Проверка сбора монеты
     if (
@@ -185,7 +230,12 @@ function gameLoop() {
       Math.abs(player.y - coin.y) < player.height / 2 + coin.radius
     ) {
       coins.splice(i, 1);
-      countCoins = countCoins + 1 * coins_multiplicator;
+      if (coins_bonus.isActive) {
+        countCoins += 1 * coins_bonus.multiplicator;
+      } else {
+        countCoins += 1;
+      }
+      coins_doc.innerText = countCoins.toFixed(0);
     }
   }
 

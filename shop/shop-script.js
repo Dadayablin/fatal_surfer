@@ -202,5 +202,5 @@ window.onload = () => {
 };
 
 function goBack() {
-  window.location.href = 'gameMenu.html';
+  window.location.href = '../menu/gameMenu.html';
 }

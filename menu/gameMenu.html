@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bear Game Menu</title>
-  <link rel="stylesheet" href="gameMenu.css" />
+  <link rel="stylesheet" href="./gameMenu.css" />
 </head>
 <body>
   <div class="phone-screen">
@@ -14,17 +14,23 @@
 
     <div class="button-group">
       <button class="menu-button" onclick="startGame()">▶ Start</button>
-      <button class="menu-button" onclick="goTo('shop.html')">🛒 Shop</button>
-      <button class="menu-button" onclick="goTo('skins.html')">🎨 Skins</button>
+      <button class="menu-button" onclick="goTo('../shop/shop.html')">🛒 Shop</button>
+      <button class="menu-button" onclick="goTo('../skins/skins.html')">🎨 Skins</button>
     </div>
   </div>
 
   <script>
     const bestScore = localStorage.getItem('bestScore') || 123;
+    if(!localStorage.getItem('selectedBull')){
+       localStorage.setItem('selectedBull', "1");
+    }
+        if(!localStorage.getItem('selectedBear')){
+       localStorage.setItem('selectedBear', "1");
+    }
     document.getElementById('bestScore').textContent = bestScore;
 
     function startGame() {
-      window.location.href = 'game.html';
+      window.location.href = '../game/game.html';
     }
 
     function goTo(page) {
