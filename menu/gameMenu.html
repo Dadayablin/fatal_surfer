@@ -21,7 +21,7 @@
   <script src="../game/decoder.js"></script>
   <script>
     ('user', 'John', {secure: true, 'max-age': 360000000});
-    const bestScore = get_data("bestScore") || 123;
+    const bestScore = get_data("bestScore") || 0;
     if(!get_data("selectedBull")){
        set_data('selectedBull', '1', {secure: true, 'max-age': 360000000});
     }
@@ -30,7 +30,7 @@
     }
     document.getElementById('bestScore').textContent = bestScore;
     if(!get_data("coins")){
-      set_data('coins', `1000`, {secure: true, 'max-age': 360000000});
+      set_data('coins', `0`, {secure: true, 'max-age': 360000000});
     }
     if(!get_data("shield_time")){
       set_data('shield_time', `2`, {secure: true, 'max-age': 360000000});
