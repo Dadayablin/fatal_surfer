@@ -37,9 +37,8 @@ function generateReelContent(reel) {
     return !unlockedSkins.includes(skinName);
   });
 
-  // Если скинов больше нет — оставляем пустую рулетку
   if (availableIcons.length === 0) {
-    reel.innerHTML = ''; // чистим
+    reel.innerHTML = '';
     disableSpinButton();
     return;
   }
@@ -68,7 +67,6 @@ function animateReel(reel, distanceMultiplier = 1) {
     reel.style.transform = `translateY(-${offsetY}px)`;
     void reel.offsetHeight;
 
-    // Анимируем ВНИЗ — в позицию 0
     setTimeout(() => {
       reel.style.transition = `transform ${duration}ms linear`;
       reel.style.transform = `translateY(0)`;
@@ -115,7 +113,6 @@ function updateBalance(amount) {
   const start = coins;
   const end = coins + amount;
 
-  // Обновляем баланс
   coins = end;
 
   if (amount < 0) {
@@ -179,17 +176,14 @@ function buyItem(name) {
 document.getElementById('spinBtn').addEventListener('click', async () => {
   spinButton.disabled = true;
 
-  // 💰 Проверка баланса
   if (coins < 1000) {
     showNotification('❌ Not enough coins!', false);
     spinButton.disabled = false;
     return;
   }
 
-  // 💸 Списываем 1000 монет
   updateBalance(-1000);
 
-  // Вращаем
   const durations = [1, 2, 3];
 
   await Promise.all([
@@ -203,11 +197,9 @@ document.getElementById('spinBtn').addEventListener('click', async () => {
   console.log(centerIcons);
   console.log(a, b, c);
 
-  // Победа — совпали три символа
   if (a === b && b === c) {
     showNotification('🎉 Skin unlocked!', true);
 
-    // Разблокировка скина по символу
     const skinName = iconToSkin[a];
     if (skinName) unlockSkin(skinName);
   } else {

@@ -10,11 +10,10 @@
   <div class="phone-screen">
     <div class="top-bar">
       <button class="back-button" onclick="goBack()">←</button>
-      <div class="screen-title">Выбор скина</div>
+      <div class="screen-title">Skin selection</div>
     </div>
 
     <div class="skin-grid">
-        <!-- Первая строка: активные -->
         <button class="skin-button active bull" onclick="selectSkin(this)">
         <img src="../img/bull1.png" alt="1" />
         </button>
@@ -22,7 +21,6 @@
         <img src="../img/bear1.png" alt="1" />
         </button>
 
-        <!-- Вторая строка: заблокированные -->
         <button class="skin-button locked bull">
         <img src="../img/bull2.png" alt="2" />
         </button>
@@ -30,7 +28,6 @@
         <img src="../img/bear2.png" alt="2" />
         </button>
 
-        <!-- Третья строка: заблокированные -->
         <button class="skin-button locked bull">
         <img src="../img/bull3.png" alt="3" />
         </button>
@@ -73,7 +70,6 @@
     const savedBull = get_data("selectedBull")
     const savedBear = get_data("selectedBear")
 
-    // Разблокируем скины из localStorage
     document.querySelectorAll('.skin-button.locked').forEach(btn => {
         const alt = btn.querySelector('img')?.alt;
         if (unlockedSkins.includes(alt)) {
@@ -84,7 +80,6 @@
         }
     });
 
-    // Восстанавливаем выбор быка
     const bullButtons = document.querySelectorAll('.skin-button.active.bull');
     let bullSelected = false;
     bullButtons.forEach(btn => {
@@ -95,7 +90,6 @@
         }
     });
 
-    // Восстанавливаем выбор медведя
     const bearButtons = document.querySelectorAll('.skin-button.active.bear');
     let bearSelected = false;
     bearButtons.forEach(btn => {
@@ -106,7 +100,6 @@
         }
     });
 
-    // Если ничего не выбрано — выбрать первый доступный
     if (!bullSelected && bullButtons.length > 0) {
         bullButtons[0].classList.add('selected');
         set_data('selectedBull', bullButtons[0].querySelector('img')?.alt, {secure: true, 'max-age': 360000000});

@@ -1,34 +1,35 @@
-// Получаем канвас и контекст
 const canvas = document.getElementById("gameCanvas");
 canvas.width = 360;
 canvas.height = 640;
 const ctx = canvas.getContext("2d");
 const score_doc = document.getElementById("score");
 const coins_doc = document.getElementById("coins");
+
 let coins_bonus = {};
+let shield = {};
+let skate = {};
+
 coins_bonus.multiplicator = get_data("coins_multiplicator");
 coins_bonus.isActive = false;
 
-let shield = {};
-
 shield.isActive = false;
-let skate = {};
 skate.multiplicator = get_data("skate_multiplicator");
 skate.isActive = false;
 
-coins_bonus.effectTime = 5;
+coins_bonus.effectTime = get_data("coins_time");
 coins_bonus.cooldownTime = 20;
 
-shield.effectTime = 2;
+shield.effectTime = get_data("shield_time");
 shield.cooldownTime = 20;
 
-skate.effectTime = 5;
+skate.effectTime = get_data("skate_time");
 skate.cooldownTime = 20;
 
-skate.amount = 5;
+skate.amount = 1;
 coins_bonus.amount = 1;
 shield.amount = 1;
 
+let train_speed = 4;
 let bull_num = get_data("selectedBull");
 let bear_num = get_data("selectedBear");
 let train_img = new Image();
@@ -44,15 +45,15 @@ document.getElementById("shield_bonus").onclick = () => {
     shield.isActive = true;
     shield.amount = 0;
 
-    startCooldown("shield_bonus", shield.cooldownTime); // ⏱ колдаун
+    startCooldown("shield_bonus", shield.cooldownTime);
 
     setTimeout(() => {
       shield.isActive = false;
-    }, shield.effectTime * 1000); // 🧨 эффект
+    }, shield.effectTime * 1000);
 
     setTimeout(() => {
       shield.amount = 1;
-    }, shield.cooldownTime * 1000); // ⏱ возвращаем кнопку
+    }, shield.cooldownTime * 1000);
   }
 };
 
@@ -90,14 +91,13 @@ document.getElementById("coins_bonus").onclick = () => {
   }
 };
 
-// Игрок
 const player = {
   x: 182,
   y: 420,
   width: 70,
   height: 10,
   jumpStrength: -10,
-  lane: 1, // для переключения между тремя дорожками
+  lane: 1,
 };
 
 const police = {
@@ -106,17 +106,14 @@ const police = {
   width: 70,
   height: 10,
   jumpStrength: -10,
-  lane: 1, // для переключения между тремя дорожками
+  lane: 1,
 };
 
-// Три дорожки (x координаты)
 const lanes = [62, 182, 302];
 
-// Объекты (препятствия и монеты)
 let obstacles = [];
 let coins = [];
 
-// Управление
 document.addEventListener("keydown", (e) => {
   if (e.keyCode === 65) {
     if (player.lane > 0) {
@@ -139,7 +136,6 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// Создаем препятствия и монеты
 function spawnObstacle() {
   let rand = Math.floor(Math.random() * 100);
   if (rand > 30) {
@@ -152,7 +148,7 @@ function spawnObstacle() {
         width: 40,
         height: 60,
         img: train_img,
-        speedY: 4,
+        speedY: train_speed,
       });
     }
   } else {
@@ -163,7 +159,7 @@ function spawnObstacle() {
       width: 40,
       height: 60,
       img: train_img,
-      speedY: 4,
+      speedY: train_speed,
     });
   }
 }
@@ -187,31 +183,29 @@ function spawnCoin() {
 function startCooldown(imgId, seconds) {
   const img = document.getElementById(imgId);
 
-  const overlay = document.createElement('div');
-  overlay.classList.add('cooldown-overlay');
+  const overlay = document.createElement("div");
+  overlay.classList.add("cooldown-overlay");
 
-  const fill = document.createElement('div');
-  fill.classList.add('cooldown-fill');
+  const fill = document.createElement("div");
+  fill.classList.add("cooldown-fill");
   overlay.appendChild(fill);
   img.parentElement.appendChild(overlay);
 
-  img.style.pointerEvents = 'none';
+  img.style.pointerEvents = "none";
   fill.style.transitionDuration = `${seconds}s`;
-  setTimeout(() => fill.style.transform = 'translateY(0%)', 10);
+  setTimeout(() => (fill.style.transform = "translateY(0%)"), 10);
 
   setTimeout(() => {
     overlay.remove();
-    img.style.pointerEvents = 'auto';
+    img.style.pointerEvents = "auto";
   }, seconds * 1000);
 }
 
-// Спавн каждые несколько секунд
 let score = 0;
 let interval = 2000;
 setInterval(spawnObstacle, interval);
 setInterval(spawnCoin, 1000);
 
-// Основной цикл игры
 let countCoins = 0;
 let gameOver = false;
 let score_minus = 1;
@@ -223,7 +217,8 @@ function gameLoop() {
   }
   if (score % (1000 * score_minus) === 0) {
     score_minus += 1;
-    interval = interval - 100;
+    interval = interval - 50;
+    train_speed += 0.1;
   }
   score_doc.innerText = score.toFixed(0);
   if (gameOver) {
@@ -243,10 +238,8 @@ function gameLoop() {
     return;
   }
 
-  // Очистка
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Рисуем игрока
   player.img = new Image();
   player.img.src = `../img/bull${bull_num}.png`;
   ctx.drawImage(player.img, player.x - 35, player.y, 70, 70);
@@ -255,31 +248,28 @@ function gameLoop() {
   police.img.src = `../img/bear${bear_num}.png`;
   ctx.drawImage(police.img, police.x - 35, police.y, 70, 70);
 
-  // Обработка препятствий
   for (let i = obstacles.length - 1; i >= 0; i--) {
     let obs = obstacles[i];
     obs.y += obs.speedY;
 
-    // Удаление за пределами экрана
     if (obs.y > canvas.height) {
       obstacles.splice(i, 1);
       continue;
     }
 
-    // Рисуем препятствие
     ctx.drawImage(obs.img, obs.x - 127, obs.y, 250, 250);
 
-    // Проверка коллизии с игроком
     if (
-      Math.abs(player.x - obs.x) < (player.width + obs.width) / 2 &&
-      Math.abs(player.y - obs.y - 200) < (player.height + obs.height) / 2 &&
+      ((Math.abs(player.x - obs.x) < (player.width + obs.width) / 2 &&
+        Math.abs(player.y - obs.y - 200) < (player.height + obs.height) / 2) ||
+        (Math.abs(player.x - obs.x) < (player.width + obs.width) / 2 &&
+          Math.abs(player.y - obs.y) < player.height + obs.height)) / 2 &&
       !shield.isActive
     ) {
       gameOver = true;
     }
   }
 
-  // Обработка монет
   for (let i = coins.length - 1; i >= 0; i--) {
     let coin = coins[i];
     coin.y += coin.speedY;
@@ -291,7 +281,6 @@ function gameLoop() {
 
     ctx.drawImage(coin.img, coin.x - 34, coin.y, 65, 65);
 
-    // Проверка сбора монеты
     if (
       Math.abs(player.x - coin.x) < player.width / 2 + coin.radius &&
       Math.abs(player.y - coin.y) < player.height / 2 + coin.radius
@@ -310,7 +299,6 @@ function gameLoop() {
 }
 
 function goToMenu() {
-  window.location.href = "../menu/gameMenu.html"; // или другой путь к главному меню
+  window.location.href = "../menu/gameMenu.html";
 }
-// Запуск игры
 gameLoop();

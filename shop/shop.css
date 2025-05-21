@@ -172,7 +172,6 @@ body {
   font-size: 14px;
 }
 
-/* Компактное уведомление */
 .notification {
   position: absolute;
   top: 12px;

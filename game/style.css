@@ -83,7 +83,7 @@ body {
   font-weight: bold;
   font-size: 14px;
   pointer-events: auto;
-  gap: 6px; /* 🟢 ВАЖНО: добавляет расстояние между элементами */
+  gap: 6px;
 }
 
 .hud-block img {
@@ -140,7 +140,7 @@ body {
   right: 0;
   display: flex;
   justify-content: center;
-  gap: 15px; /* уменьшено */
+  gap: 15px;
   z-index: 10;
 }
 
