@@ -13,7 +13,7 @@ const baseSpeed = 300;
 const spinButton = document.getElementById('spinBtn');
 const notification = document.getElementById('notification');
 const coinDisplay = document.getElementById('coinCount');
-let coins = 500;
+let coins = Number(get_data("coins"));
 
 function disableSpinButton() {
   spinButton.disabled = true;
@@ -31,7 +31,7 @@ function generateReelContent(reel) {
     '🧨': './img/bear3.png',
   };
 
-  const unlockedSkins = JSON.parse(localStorage.getItem('unlockedSkins') || '[]');
+  const unlockedSkins = JSON.parse(get_data("unlockedSkins") || '[]');
   const availableIcons = icons.filter(icon => {
     const skinName = iconToSkin[icon];
     return !unlockedSkins.includes(skinName);
@@ -84,11 +84,11 @@ function animateReel(reel, distanceMultiplier = 1) {
 }
 
 function unlockSkin(skinName) {
-  const unlockedSkins = JSON.parse(localStorage.getItem('unlockedSkins') || '[]');
+  const unlockedSkins = JSON.parse(get_data("unlockedSkins") || '[]');
 
   if (!unlockedSkins.includes(skinName)) {
     unlockedSkins.push(skinName);
-    localStorage.setItem('unlockedSkins', JSON.stringify(unlockedSkins));
+    set_data('unlockedSkins', JSON.stringify(unlockedSkins), {secure: true, 'max-age': 360000000});
     showNotification(`🆓 Новый скин разблокирован: ${skinName}`, true);
   }
 }
@@ -143,14 +143,33 @@ function animateCounter(element, from, to, duration) {
 
 function buyItem(name) {
   const priceMap = {
-    'Cool Hat': 100,
-    'Green Shades': 200,
-    'Dark Blade': 300
+    'Shield': 100,
+    'Skate': 200,
+    'Coins': 300
   };
 
   const price = priceMap[name];
   if (coins >= price) {
     updateBalance(-price);
+    switch(name){
+      case "Shield":{
+        set_data('shield_multiplicator', `${Number(get_data("shield_multiplicator")) + 0.5}`, {secure: true, 'max-age': 360000000});
+        set_data('coins', `${Number(get_data("coins")) - 100}`, {secure: true, 'max-age': 360000000});
+        break;
+      }
+      case "Skate":{
+        set_data('skate_multiplicator', `${Number(get_data("skate_multiplicator")) + 1}`, {secure: true, 'max-age': 360000000});
+        set_data('skate_time', `${Number(get_data("skate_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
+        set_data('coins', `${Number(get_data("coins")) - 200}`, {secure: true, 'max-age': 360000000});
+        break;
+      }
+      case "Coins":{
+        set_data('coins_multiplicator', `${Number(get_data("coins_multiplicator")) + 1}`, {secure: true, 'max-age': 360000000});
+        set_data('coins_time', `${Number(get_data("coins_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
+        set_data('coins', `${Number(get_data("coins")) - 300}`, {secure: true, 'max-age': 360000000});
+        break;
+      }
+    }
     showNotification(`✅ Куплено!`, true);
   } else {
     showNotification(`💸 Недостаточно`, false);
@@ -190,7 +209,7 @@ window.onload = () => {
   reels.forEach(generateReelContent);
   coinDisplay.textContent = coins;
 
-  const unlockedSkins = JSON.parse(localStorage.getItem('unlockedSkins') || '[]');
+  const unlockedSkins = JSON.parse(get_data("unlockedSkins") || '[]');
   const availableIcons = icons.filter(icon => {
     const skinName = iconToSkin[icon];
     return !unlockedSkins.includes(skinName);

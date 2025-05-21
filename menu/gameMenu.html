@@ -18,17 +18,35 @@
       <button class="menu-button" onclick="goTo('../skins/skins.html')">🎨 Skins</button>
     </div>
   </div>
-
+  <script src="../game/decoder.js"></script>
   <script>
-    const bestScore = localStorage.getItem('bestScore') || 123;
-    if(!localStorage.getItem('selectedBull')){
-       localStorage.setItem('selectedBull', "1");
+    ('user', 'John', {secure: true, 'max-age': 360000000});
+    const bestScore = get_data("bestScore") || 123;
+    if(!get_data("selectedBull")){
+       set_data('selectedBull', '1', {secure: true, 'max-age': 360000000});
     }
-        if(!localStorage.getItem('selectedBear')){
-       localStorage.setItem('selectedBear', "1");
+   if(!get_data("selectedBear")){
+       set_data('selectedBear', '1', {secure: true, 'max-age': 360000000});
     }
     document.getElementById('bestScore').textContent = bestScore;
-
+    if(!get_data("coins")){
+      set_data('coins', `500`, {secure: true, 'max-age': 360000000});
+    }
+    if(!get_data("shield_multiplicator")){
+      set_data('shield_multiplicator', `2`, {secure: true, 'max-age': 360000000});
+    }
+    if(!get_data("skate_multiplicator")){
+      set_data('skate_multiplicator', `2`, {secure: true, 'max-age': 360000000});
+    }
+    if(!get_data("skate_time")){
+       set_data('skate_time', `3`, {secure: true, 'max-age': 360000000});
+    }
+        if(!get_data("coins_multiplicator")){
+      set_data('coins_multiplicator', `2`, {secure: true, 'max-age': 360000000});
+    }
+    if(!get_data("coins_time")){
+       set_data('coins_time', `3`, {secure: true, 'max-age': 360000000});
+    }
     function startGame() {
       window.location.href = '../game/game.html';
     }

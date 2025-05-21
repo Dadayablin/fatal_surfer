@@ -40,7 +40,7 @@
 
     </div>
   </div>
-
+<script src="../game/decoder.js"></script>
 <script>
   function goBack() {
     window.location.href = "../menu/gameMenu.html";
@@ -56,7 +56,7 @@
         btn.classList.remove('selected')
         );
         button.classList.add('selected');
-        localStorage.setItem('selectedBear', imgAlt);
+        set_data('selectedBear', imgAlt, {secure: true, 'max-age': 360000000});
     }
 
     if (isBull) {
@@ -64,14 +64,14 @@
         btn.classList.remove('selected')
         );
         button.classList.add('selected');
-        localStorage.setItem('selectedBull', imgAlt);
+        set_data('selectedBull', imgAlt, {secure: true, 'max-age': 360000000});
     }
     }
 
     window.onload = () => {
-    const unlockedSkins = JSON.parse(localStorage.getItem('unlockedSkins') || '[]');
-    const savedBull = localStorage.getItem('selectedBull');
-    const savedBear = localStorage.getItem('selectedBear');
+    const unlockedSkins = JSON.parse(get_data("unlockedSkins") || '[]');
+    const savedBull = get_data("selectedBull")
+    const savedBear = get_data("selectedBear")
 
     // Разблокируем скины из localStorage
     document.querySelectorAll('.skin-button.locked').forEach(btn => {
@@ -109,12 +109,12 @@
     // Если ничего не выбрано — выбрать первый доступный
     if (!bullSelected && bullButtons.length > 0) {
         bullButtons[0].classList.add('selected');
-        localStorage.setItem('selectedBull', bullButtons[0].querySelector('img')?.alt);
+        set_data('selectedBull', bullButtons[0].querySelector('img')?.alt, {secure: true, 'max-age': 360000000});
     }
 
     if (!bearSelected && bearButtons.length > 0) {
         bearButtons[0].classList.add('selected');
-        localStorage.setItem('selectedBear', bearButtons[0].querySelector('img')?.alt);
+        set_data('selectedBear', bearButtons[0].querySelector('img')?.alt, {secure: true, 'max-age': 360000000});
     }
     };
 </script>

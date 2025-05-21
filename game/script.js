@@ -6,45 +6,45 @@ const ctx = canvas.getContext("2d");
 const score_doc = document.getElementById("score");
 const coins_doc = document.getElementById("coins");
 let coins_bonus = {};
-coins_bonus.multiplicator = 1;
+coins_bonus.multiplicator = get_data("coins_multiplicator");
 coins_bonus.isActive = false;
-coins_bonus.time = 3;
+coins_bonus.time = get_data("coins_time");
 let shield = {};
-shield.time = 2;
+shield.time = get_data("shield_time");
 shield.isActive = false;
 let skate = {};
-skate.multiplicator = 0;
+skate.multiplicator = get_data("skate_multiplicator");
 skate.isActive = false;
-skate.time = 3;
+skate.time = get_data("skate_time");
 let bull_num = localStorage.getItem("selectedBull");
 let bear_num = localStorage.getItem("selectedBear");
 let train_img = new Image();
 train_img.src = "../img/train.png";
 let coin_img = new Image();
-coin_img.src = "../img/coin1.png";
+coin_img.src = "../img/coin.png";
 
 document.getElementById("shield_bonus").onclick = () => {
   shield.isActive = true;
-  console.log("shield bonus active")
+  console.log("shield bonus active");
   setTimeout(() => {
-    console.log("shield bonus deactive")
+    console.log("shield bonus deactive");
     shield.isActive = false;
   }, shield.time * 1000);
 };
 document.getElementById("skate_bonus").onclick = () => {
   skate.isActive = true;
-  console.log("skate bonus active")
+  console.log("skate bonus active");
   setTimeout(() => {
-    console.log("skate bonus deactive")
+    console.log("skate bonus deactive");
     skate.isActive = false;
   }, skate.time * 1000);
 };
 
 document.getElementById("coins_bonus").onclick = () => {
   coins_bonus.isActive = true;
-  console.log("coin bonus active")
+  console.log("coin bonus active");
   setTimeout(() => {
-    console.log("coin bonus deactive")
+    console.log("coin bonus deactive");
     coins_bonus.isActive = false;
   }, coins_bonus.time * 1000);
 };
@@ -52,7 +52,7 @@ document.getElementById("coins_bonus").onclick = () => {
 // Игрок
 const player = {
   x: 182,
-  y: 470,
+  y: 420,
   width: 70,
   height: 10,
   jumpStrength: -10,
@@ -61,7 +61,7 @@ const player = {
 
 const police = {
   x: 182,
-  y: 550,
+  y: 500,
   width: 70,
   height: 10,
   jumpStrength: -10,
@@ -165,6 +165,13 @@ function gameLoop() {
   }
   score_doc.innerText = score.toFixed(0);
   if (gameOver) {
+    if (!get_data("bestScore") || Number(get_data("bestScore") < score)) {
+      set_data("bestScore", `${score.toFixed(0)}`, { secure: true, "max-age": 360000000 });
+    }
+    set_data("coins", `${Number(get_data("coins")) + countCoins}`, {
+      secure: true,
+      "max-age": 360000000,
+    });
     ctx.fillStyle = "rgba(0,0,0,0.7)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "white";
