@@ -25,7 +25,6 @@ body {
   color: #fff;
   font-size: 1rem;
   display: flex;
-  position: absolute;
 }
 
 #coins {
@@ -33,7 +32,6 @@ body {
   color: #fff;
   font-size: 1rem;
   display: flex;
-  position: absolute;
   right: 30px;
 }
 #game_buttons {
@@ -41,12 +39,167 @@ body {
   position: absolute;
   bottom: -20px;
 }
+
 #game_buttons img {
-  width: 50px;
-  height: 50px;
-  margin: 35px;
+  width: 56px;
+  height: 56px;
+  background: #1c1c1c;
+  padding: 4px;
+  border-radius: 50%;
+  border: 2px solid #00ff73;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  position: relative;
 }
+
 #gameCanvas {
   background: url(../img/rails.png) no-repeat;
   background-size: 100%;
+}
+
+/* HUD */
+#hud {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud-block {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1f1f1f;
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid #00ff73;
+  box-shadow: 0 0 6px rgba(0, 255, 115, 0.3);
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  pointer-events: auto;
+  gap: 6px; /* 🟢 ВАЖНО: добавляет расстояние между элементами */
+}
+
+.hud-block img {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+/* Game Over Modal */
+#game-over-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.modal-content h2{
+  margin-bottom: 10px;
+  margin-top: 0px !important;
+}
+
+.modal-content {
+  background: #1c1c1c;
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px;
+  border: 2px solid #00ff73;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 255, 115, 0.3);
+}
+
+.modal-content button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #00ff73;
+  border: none;
+  border-radius: 10px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Boosters */
+#game_buttons {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* уменьшено */
+  z-index: 10;
+}
+
+#game_buttons img {
+  width: 56px;
+  height: 56px;
+  background: #1c1c1c;
+  padding: 4px;
+  border-radius: 50%;
+  border: 2px solid #00ff73;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+#game_buttons img:active {
+  transform: scale(0.9);
+}
+
+.cooldown-overlay {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  top: 0;
+  left: 0;
+  z-index: 20;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cooldown-fill {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 255, 115, 0.5);
+  transform: translateY(100%);
+  transition: transform linear;
+}
+
+.booster-wrapper {
+  position: relative;
+  width: 56px;
+  height: 56px;
+}
+
+.hud-block span:first-child {
+  margin-right: 4px;
+}
+
+.hud-block img {
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+}
+
+.game-over-img {
+  width: 150px;
+  height: auto;
+
 }

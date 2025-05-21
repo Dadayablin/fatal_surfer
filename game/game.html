@@ -1,22 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Subway Surfers's</title>
-    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subway Runner</title>
     <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" href="favicon.png" type="image/x-icon" />
   </head>
   <body>
     <div id="game_container" class="phone-screen">
-      <h1 id="score">0</h1>
-      <h1 id="coins">0</h1>
-      <div id="game_buttons">
-        <img src="../img/skateboard.png" id="skate_bonus"></img>
-        <img src="../img/coin.png" id="coins_bonus"></img>
-        <img src="../img/shield.png" id="shield_bonus"></img>
-      </div>
-      <canvas id="gameCanvas"></canvas>
+      <!-- HUD -->
+    <div id="hud">
+      <div class="hud-block"><span>Score: </span><span id="score">0</span></div>
+      <div class="hud-block"><img src="../img/coin.png"><span id="coins">0</span></div>
     </div>
+
+      <!-- Boosters -->
+      <div id="game_buttons">
+        <div class="booster-wrapper">
+          <img src="../img/skateboard.png" id="skate_bonus" alt="Skateboard Booster" />
+        </div>
+        <div class="booster-wrapper">
+          <img src="../img/coin.png" id="coins_bonus" alt="Coin Booster" />
+        </div>
+        <div class="booster-wrapper">
+          <img src="../img/shield.png" id="shield_bonus" alt="Shield Booster" />
+        </div>
+      </div>
+
+      <!-- Canvas -->
+      <canvas id="gameCanvas"></canvas>
+
+      <!-- Game Over Modal -->
+      <div id="game-over-modal">
+        <div class="modal-content">
+          <img src="../img/cool_bear.png" class="game-over-img" />
+          <h2>Game Over</h2>
+          <p>Score: <span id="finalScore">0</span></p>
+          <p>Coins: <span id="finalCoins">0</span></p>
+          <button onclick="location.reload()">Play Again</button>
+          <button onclick="goToMenu()">Back to Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./decoder.js"></script>
+    <script src="./script.js"></script>
   </body>
-  <script src="./decoder.js"></script>
-  <script src="./script.js"></script>
 </html>

@@ -25,10 +25,10 @@ function disableSpinButton() {
 
 function generateReelContent(reel) {
   const iconMap = {
-    '🍒': './img/bull2.png',
-    '⭐': './img/bull3.png',
-    '💎': './img/bear2.png',
-    '🧨': './img/bear3.png',
+    '🍒': '../img/bull2.png',
+    '⭐': '../img/bull3.png',
+    '💎': '../img/bear2.png',
+    '🧨': '../img/bear3.png',
   };
 
   const unlockedSkins = JSON.parse(get_data("unlockedSkins") || '[]');
@@ -89,7 +89,7 @@ function unlockSkin(skinName) {
   if (!unlockedSkins.includes(skinName)) {
     unlockedSkins.push(skinName);
     set_data('unlockedSkins', JSON.stringify(unlockedSkins), {secure: true, 'max-age': 360000000});
-    showNotification(`🆓 Новый скин разблокирован: ${skinName}`, true);
+    showNotification(`New skin is unlocked!`, true);
   }
 }
 
@@ -104,7 +104,7 @@ function getCenterIcon(reel) {
 }
 
 function showNotification(text, isWin = false) {
-  notification.textContent = isWin ? `🎉 ${text}` : `😔 ${text}`;
+  notification.textContent = isWin ? `${text}` : `${text}`;
   notification.classList.add('show');
   setTimeout(() => {
     notification.classList.remove('show');
@@ -126,7 +126,7 @@ function updateBalance(amount) {
 }
 
 function animateCounter(element, from, to, duration) {
-  const steps = Math.min(20, Math.abs(from - to)); // не более 20 шагов
+  const steps = Math.min(20, Math.abs(from - to)); 
   const stepTime = Math.max(20, duration / steps);
   let current = from;
   const delta = (from - to) / steps;
@@ -170,15 +170,26 @@ function buyItem(name) {
         break;
       }
     }
-    showNotification(`✅ Куплено!`, true);
+    showNotification(`✅ Purchased!`, true);
   } else {
-    showNotification(`💸 Недостаточно`, false);
+    showNotification(`❌ Not enough coins!`, false);
   }
 }
 
 document.getElementById('spinBtn').addEventListener('click', async () => {
   spinButton.disabled = true;
 
+  // 💰 Проверка баланса
+  if (coins < 1000) {
+    showNotification('❌ Not enough coins!', false);
+    spinButton.disabled = false;
+    return;
+  }
+
+  // 💸 Списываем 1000 монет
+  updateBalance(-1000);
+
+  // Вращаем
   const durations = [1, 2, 3];
 
   await Promise.all([
@@ -189,19 +200,20 @@ document.getElementById('spinBtn').addEventListener('click', async () => {
 
   const centerIcons = reels.map(getCenterIcon);
   const [a, b, c] = centerIcons;
-  console.log(centerIcons)
-  console.log(a, b, c)
+  console.log(centerIcons);
+  console.log(a, b, c);
 
+  // Победа — совпали три символа
   if (a === b && b === c) {
-    updateBalance(+100);
-    showNotification('WIN!', true);
+    showNotification('🎉 Skin unlocked!', true);
 
-    // Разблокируем скин по символу
+    // Разблокировка скина по символу
     const skinName = iconToSkin[a];
     if (skinName) unlockSkin(skinName);
   } else {
     showNotification('Try again', false);
   }
+
   spinButton.disabled = false;
 });
 

@@ -8,16 +8,29 @@ const coins_doc = document.getElementById("coins");
 let coins_bonus = {};
 coins_bonus.multiplicator = get_data("coins_multiplicator");
 coins_bonus.isActive = false;
-coins_bonus.time = get_data("coins_time");
+
 let shield = {};
-shield.time = get_data("shield_time");
+
 shield.isActive = false;
 let skate = {};
 skate.multiplicator = get_data("skate_multiplicator");
 skate.isActive = false;
-skate.time = get_data("skate_time");
-let bull_num = localStorage.getItem("selectedBull");
-let bear_num = localStorage.getItem("selectedBear");
+
+coins_bonus.effectTime = 5;
+coins_bonus.cooldownTime = 20;
+
+shield.effectTime = 2;
+shield.cooldownTime = 20;
+
+skate.effectTime = 5;
+skate.cooldownTime = 20;
+
+skate.amount = 5;
+coins_bonus.amount = 1;
+shield.amount = 1;
+
+let bull_num = get_data("selectedBull");
+let bear_num = get_data("selectedBear");
 let train_img = new Image();
 train_img.src = "../img/train.png";
 let coin_img = new Image();
@@ -30,11 +43,16 @@ document.getElementById("shield_bonus").onclick = () => {
   if (shield.amount !== 0) {
     shield.isActive = true;
     shield.amount = 0;
-    console.log("shield bonus active");
+
+    startCooldown("shield_bonus", shield.cooldownTime); // ⏱ колдаун
+
     setTimeout(() => {
-      console.log("shield bonus deactive");
       shield.isActive = false;
-    }, shield.time * 1000);
+    }, shield.effectTime * 1000); // 🧨 эффект
+
+    setTimeout(() => {
+      shield.amount = 1;
+    }, shield.cooldownTime * 1000); // ⏱ возвращаем кнопку
   }
 };
 
@@ -42,11 +60,16 @@ document.getElementById("skate_bonus").onclick = () => {
   if (skate.amount !== 0) {
     skate.isActive = true;
     skate.amount = 0;
-    console.log("skate bonus active");
+
+    startCooldown("skate_bonus", skate.cooldownTime);
+
     setTimeout(() => {
-      console.log("skate bonus deactive");
       skate.isActive = false;
-    }, skate.time * 1000);
+    }, skate.effectTime * 1000);
+
+    setTimeout(() => {
+      skate.amount = 1;
+    }, skate.cooldownTime * 1000);
   }
 };
 
@@ -54,11 +77,16 @@ document.getElementById("coins_bonus").onclick = () => {
   if (coins_bonus.amount !== 0) {
     coins_bonus.isActive = true;
     coins_bonus.amount = 0;
-    console.log("coin bonus active");
+
+    startCooldown("coins_bonus", coins_bonus.cooldownTime);
+
     setTimeout(() => {
-      console.log("coin bonus deactive");
       coins_bonus.isActive = false;
-    }, coins_bonus.time * 1000);
+    }, coins_bonus.effectTime * 1000);
+
+    setTimeout(() => {
+      coins_bonus.amount = 1;
+    }, coins_bonus.cooldownTime * 1000);
   }
 };
 
@@ -156,6 +184,27 @@ function spawnCoin() {
   }
 }
 
+function startCooldown(imgId, seconds) {
+  const img = document.getElementById(imgId);
+
+  const overlay = document.createElement('div');
+  overlay.classList.add('cooldown-overlay');
+
+  const fill = document.createElement('div');
+  fill.classList.add('cooldown-fill');
+  overlay.appendChild(fill);
+  img.parentElement.appendChild(overlay);
+
+  img.style.pointerEvents = 'none';
+  fill.style.transitionDuration = `${seconds}s`;
+  setTimeout(() => fill.style.transform = 'translateY(0%)', 10);
+
+  setTimeout(() => {
+    overlay.remove();
+    img.style.pointerEvents = 'auto';
+  }, seconds * 1000);
+}
+
 // Спавн каждые несколько секунд
 let score = 0;
 let interval = 2000;
@@ -188,14 +237,9 @@ function gameLoop() {
       secure: true,
       "max-age": 360000000,
     });
-    ctx.fillStyle = "rgba(0,0,0,0.7)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
-    ctx.fillText("Игра окончена", 200, 200);
-    ctx.font = "20px Arial";
-    ctx.fillText("Очки:" + score.toFixed(0), 250, 240);
-    ctx.fillText("Монетки:" + countCoins, 300, 300);
+    document.getElementById("finalScore").textContent = score.toFixed(0);
+    document.getElementById("finalCoins").textContent = countCoins.toFixed(0);
+    document.getElementById("game-over-modal").style.display = "flex";
     return;
   }
 
@@ -265,5 +309,8 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
+function goToMenu() {
+  window.location.href = "../menu/gameMenu.html"; // или другой путь к главному меню
+}
 // Запуск игры
 gameLoop();

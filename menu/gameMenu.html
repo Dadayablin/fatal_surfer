@@ -8,12 +8,12 @@
 </head>
 <body>
   <div class="phone-screen">
-    <img src="bull-face-clipart-xl.png" class="logo-img" />
-    <div class="game-title">Сабвейчик</div>
+    <img src="../img/angry_bear.png" class="logo-img" />
+    <div class="game-title">Fatal Surfer</div>
     <div class="best-score">Best Score: <span id="bestScore">0</span></div>
 
     <div class="button-group">
-      <button class="menu-button" onclick="startGame()">▶ Start</button>
+      <button class="menu-button" onclick="goTo('../game/game.html')">▶ Start</button>
       <button class="menu-button" onclick="goTo('../shop/shop.html')">🛒 Shop</button>
       <button class="menu-button" onclick="goTo('../skins/skins.html')">🎨 Skins</button>
     </div>
@@ -30,7 +30,7 @@
     }
     document.getElementById('bestScore').textContent = bestScore;
     if(!get_data("coins")){
-      set_data('coins', `500`, {secure: true, 'max-age': 360000000});
+      set_data('coins', `1000`, {secure: true, 'max-age': 360000000});
     }
     if(!get_data("shield_time")){
       set_data('shield_time', `2`, {secure: true, 'max-age': 360000000});
@@ -46,9 +46,6 @@
     }
     if(!get_data("coins_time")){
        set_data('coins_time', `3`, {secure: true, 'max-age': 360000000});
-    }
-    function startGame() {
-      window.location.href = '../game/game.html';
     }
 
     function goTo(page) {
