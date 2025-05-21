@@ -153,7 +153,7 @@ function buyItem(name) {
     updateBalance(-price);
     switch(name){
       case "Shield":{
-        set_data('shield_multiplicator', `${Number(get_data("shield_multiplicator")) + 0.5}`, {secure: true, 'max-age': 360000000});
+        set_data('shield_time', `${Number(get_data("shield_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
         set_data('coins', `${Number(get_data("coins")) - 100}`, {secure: true, 'max-age': 360000000});
         break;
       }

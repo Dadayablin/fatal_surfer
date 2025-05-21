@@ -22,31 +22,44 @@ let train_img = new Image();
 train_img.src = "../img/train.png";
 let coin_img = new Image();
 coin_img.src = "../img/coin.png";
+skate.amount = 1;
+coins_bonus.amount = 1;
+shield.amount = 1;
 
 document.getElementById("shield_bonus").onclick = () => {
-  shield.isActive = true;
-  console.log("shield bonus active");
-  setTimeout(() => {
-    console.log("shield bonus deactive");
-    shield.isActive = false;
-  }, shield.time * 1000);
+  if (shield.amount !== 0) {
+    shield.isActive = true;
+    shield.amount = 0;
+    console.log("shield bonus active");
+    setTimeout(() => {
+      console.log("shield bonus deactive");
+      shield.isActive = false;
+    }, shield.time * 1000);
+  }
 };
+
 document.getElementById("skate_bonus").onclick = () => {
-  skate.isActive = true;
-  console.log("skate bonus active");
-  setTimeout(() => {
-    console.log("skate bonus deactive");
-    skate.isActive = false;
-  }, skate.time * 1000);
+  if (skate.amount !== 0) {
+    skate.isActive = true;
+    skate.amount = 0;
+    console.log("skate bonus active");
+    setTimeout(() => {
+      console.log("skate bonus deactive");
+      skate.isActive = false;
+    }, skate.time * 1000);
+  }
 };
 
 document.getElementById("coins_bonus").onclick = () => {
-  coins_bonus.isActive = true;
-  console.log("coin bonus active");
-  setTimeout(() => {
-    console.log("coin bonus deactive");
-    coins_bonus.isActive = false;
-  }, coins_bonus.time * 1000);
+  if (coins_bonus.amount !== 0) {
+    coins_bonus.isActive = true;
+    coins_bonus.amount = 0;
+    console.log("coin bonus active");
+    setTimeout(() => {
+      console.log("coin bonus deactive");
+      coins_bonus.isActive = false;
+    }, coins_bonus.time * 1000);
+  }
 };
 
 // Игрок
@@ -166,7 +179,10 @@ function gameLoop() {
   score_doc.innerText = score.toFixed(0);
   if (gameOver) {
     if (!get_data("bestScore") || Number(get_data("bestScore") < score)) {
-      set_data("bestScore", `${score.toFixed(0)}`, { secure: true, "max-age": 360000000 });
+      set_data("bestScore", `${score.toFixed(0)}`, {
+        secure: true,
+        "max-age": 360000000,
+      });
     }
     set_data("coins", `${Number(get_data("coins")) + countCoins}`, {
       secure: true,
