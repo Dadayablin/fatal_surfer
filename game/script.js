@@ -114,27 +114,80 @@ const lanes = [62, 182, 302];
 let obstacles = [];
 let coins = [];
 
+// --- Управление (клавиатура и свайпы) ---
+
+function moveLeft() {
+  if (player.lane > 0) {
+    player.lane--;
+    player.x = lanes[player.lane];
+    setTimeout(() => {
+      police.lane--;
+      police.x = lanes[player.lane];
+    }, 100);
+  }
+}
+
+function moveRight() {
+  if (player.lane < lanes.length - 1) {
+    player.lane++;
+    player.x = lanes[player.lane];
+    setTimeout(() => {
+      police.lane++;
+      police.x = lanes[player.lane];
+    }, 100);
+  }
+}
+
+function jump() {
+  // если нужна логика прыжка, добавь сюда
+  // например: player.y -= 100;
+  // или оставь пустым, если прыжок не нужен
+}
+
+// Клавиатура
 document.addEventListener("keydown", (e) => {
-  if (e.keyCode === 65) {
-    if (player.lane > 0) {
-      player.lane--;
-      player.x = lanes[player.lane];
-      setTimeout(() => {
-        police.lane--;
-        police.x = lanes[player.lane];
-      }, 100);
+  if (e.keyCode === 65) { // A
+    moveLeft();
+  } else if (e.keyCode === 68) { // D
+    moveRight();
+  }
+});
+
+// Свайпы по canvas
+let touchStartX = null;
+let touchStartY = null;
+
+canvas.addEventListener('touchstart', function(e) {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+});
+
+canvas.addEventListener('touchend', function(e) {
+  let touchEndX = e.changedTouches[0].clientX;
+  let touchEndY = e.changedTouches[0].clientY;
+
+  let dx = touchEndX - touchStartX;
+  let dy = touchEndY - touchStartY;
+
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 30) {
+      moveRight();
+    } else if (dx < -30) {
+      moveLeft();
     }
-  } else if (e.keyCode === 68) {
-    if (player.lane < lanes.length - 1) {
-      player.lane++;
-      player.x = lanes[player.lane];
-      setTimeout(() => {
-        police.lane--;
-        police.x = lanes[player.lane];
-      }, 100);
+  } else {
+    if (dy < -30) {
+      jump();
     }
   }
 });
+
+// Отключить скролл при свайпах по canvas
+canvas.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+}, { passive: false });
+
+// --- Конец блока управления ---
 
 function spawnObstacle() {
   let rand = Math.floor(Math.random() * 100);
