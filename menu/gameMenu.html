@@ -30,7 +30,7 @@
     }
     document.getElementById('bestScore').textContent = bestScore;
     if(!get_data("coins")){
-      set_data('coins', `10000`, {secure: true, 'max-age': 360000000});
+      set_data('coins', `0`, {secure: true, 'max-age': 360000000});
     }
     if(!get_data("shield_time")){
       set_data('shield_time', `2`, {secure: true, 'max-age': 360000000});

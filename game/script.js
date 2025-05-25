@@ -114,8 +114,6 @@ const lanes = [62, 182, 302];
 let obstacles = [];
 let coins = [];
 
-// --- Управление (клавиатура и свайпы) ---
-
 function moveLeft() {
   if (player.lane > 0) {
     player.lane--;
@@ -139,21 +137,16 @@ function moveRight() {
 }
 
 function jump() {
-  // если нужна логика прыжка, добавь сюда
-  // например: player.y -= 100;
-  // или оставь пустым, если прыжок не нужен
 }
 
-// Клавиатура
 document.addEventListener("keydown", (e) => {
-  if (e.keyCode === 65) { // A
+  if (e.keyCode === 65) {
     moveLeft();
-  } else if (e.keyCode === 68) { // D
+  } else if (e.keyCode === 68) {
     moveRight();
   }
 });
 
-// Свайпы по canvas
 let touchStartX = null;
 let touchStartY = null;
 
@@ -175,19 +168,12 @@ canvas.addEventListener('touchend', function(e) {
     } else if (dx < -30) {
       moveLeft();
     }
-  } else {
-    if (dy < -30) {
-      jump();
-    }
-  }
-});
+}
+})
 
-// Отключить скролл при свайпах по canvas
 canvas.addEventListener('touchmove', function(e) {
   e.preventDefault();
 }, { passive: false });
-
-// --- Конец блока управления ---
 
 function spawnObstacle() {
   let rand = Math.floor(Math.random() * 100);
