@@ -145,25 +145,37 @@ function buyItem(name) {
     'Coins': 300
   };
 
-  const price = priceMap[name];
+  let price = priceMap[name];
+  if(get_data(`${name}_price`)){
+    price = Number(get_data(`${name}_price`));
+  }
   if (coins >= price) {
     updateBalance(-price);
     switch(name){
       case "Shield":{
-        set_data('shield_time', `${Number(get_data("shield_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
-        set_data('coins', `${Number(get_data("coins")) - 100}`, {secure: true, 'max-age': 360000000});
+        if(price < 3201){
+          set_data('shield_time', `${Number(get_data("shield_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
+          set_data('coins', `${Number(get_data("coins")) - 100}`, {secure: true, 'max-age': 360000000});
+          set_data(`${name}_price`, `${price * 2}`, {secure: true, 'max-age': 360000000});
+        }
         break;
       }
       case "Skate":{
-        set_data('skate_multiplicator', `${Number(get_data("skate_multiplicator")) + 1}`, {secure: true, 'max-age': 360000000});
-        set_data('skate_time', `${Number(get_data("skate_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
-        set_data('coins', `${Number(get_data("coins")) - 200}`, {secure: true, 'max-age': 360000000});
+        if(price < 6401){
+          set_data('skate_multiplicator', `${Number(get_data("skate_multiplicator")) + 1}`, {secure: true, 'max-age': 360000000});
+          set_data('skate_time', `${Number(get_data("skate_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
+          set_data('coins', `${Number(get_data("coins")) - 200}`, {secure: true, 'max-age': 360000000});
+          set_data(`${name}_price`, `${price * 2}`, {secure: true, 'max-age': 360000000});
+        }
         break;
       }
       case "Coins":{
-        set_data('coins_multiplicator', `${Number(get_data("coins_multiplicator")) + 1}`, {secure: true, 'max-age': 360000000});
-        set_data('coins_time', `${Number(get_data("coins_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
-        set_data('coins', `${Number(get_data("coins")) - 300}`, {secure: true, 'max-age': 360000000});
+        if(price < 9601){
+          set_data('coins_multiplicator', `${Number(get_data("coins_multiplicator")) + 1}`, {secure: true, 'max-age': 360000000});
+          set_data('coins_time', `${Number(get_data("coins_time")) + 0.5}`, {secure: true, 'max-age': 360000000});
+          set_data('coins', `${Number(get_data("coins")) - 300}`, {secure: true, 'max-age': 360000000});
+          set_data(`${name}_price`, `${price * 2}`, {secure: true, 'max-age': 360000000});
+        }
         break;
       }
     }
