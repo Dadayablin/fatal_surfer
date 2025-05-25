@@ -33,15 +33,15 @@
     <div class="shop">
       <div class="item">
         <img src="../img/shield.png" alt="Item1" class="item_img">
-        <button onclick="buyItem('Shield')"><img src="../img/coin.png" class="coin-icon-btn">100</button>
+        <button class="button-active" id="shield_price_button" onclick="buyItem('Shield')"><img src="../img/coin.png" class="coin-icon-btn"><span id="shield_price">100</span></button>
       </div>
       <div class="item">
         <img src="../img/skateboard.png" alt="Item2" class="item_img">
-        <button onclick="buyItem('Skate')"><img src="../img/coin.png" class="coin-icon-btn">200</button>
+        <button class="button-active" id="skate_price_button" onclick="buyItem('Skate')"><img src="../img/coin.png" class="coin-icon-btn"><span id="skate_price">200</span></button>
       </div>
       <div class="item">
         <img src="../img/coins.png" alt="Item3" class="item_img">
-        <button onclick="buyItem('Coins')"><img src="../img/coin.png" class="coin-icon-btn">300</button>
+        <button class="button-active" id="coins_price_button" onclick="buyItem('Coins')"><img src="../img/coin.png" class="coin-icon-btn"><span id="coins_price">300</span></button>
       </div>
     </div>
     <script src="../game/decoder.js"></script>

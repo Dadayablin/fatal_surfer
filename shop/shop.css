@@ -131,7 +131,7 @@ body {
   box-shadow: 0 0 6px rgba(0, 255, 115, 0.2);
 }
 
-.item button {
+.item .button-active {
   background: #00ff73;
   color: #000;
   border: none;
@@ -143,8 +143,21 @@ body {
   transition: background 0.2s;
 }
 
-.item button:hover {
+.item .button-active:hover {
   background: #00e867;
+}
+
+.item .button-disabled {
+  background-color: gray;
+  cursor: not-allowed;
+  pointer-events: none;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background 0.2s;
 }
 
 .top-bar {
